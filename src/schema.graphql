@@ -15,4 +15,8 @@ type ShortPokemon {
 type LongPokemon {
   id: ID!
   name: String!
+  frontImage: String
+  backImage: String
+  height: String
+  weight: String
 }

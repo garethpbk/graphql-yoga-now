@@ -22,13 +22,20 @@ const QueryResolver = {
 
     const {
       data: {
+        height,
+        weight,
         species: { name },
+        sprites: { back_default, front_default },
       },
     } = pokemonRes;
 
     return {
       id,
       name,
+      height,
+      weight,
+      backImage: back_default,
+      frontImage: front_default,
     };
   },
 };
