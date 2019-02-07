@@ -1,10 +1,11 @@
+require('now-env');
 const axios = require('axios');
 
 const QueryResolver = {
   allPokemon: async (_, args) => {
     const { limit } = args;
 
-    const allPokemonRes = await axios(`https://pokeapi.co/api/v2/pokemon?limit=${limit}`);
+    const allPokemonRes = await axios(`${process.env.API_BASE_URL}?limit=${limit}`);
 
     const {
       data: { results: pokemon },
@@ -18,7 +19,7 @@ const QueryResolver = {
   pokemon: async (_, args) => {
     const { id } = args;
 
-    const pokemonRes = await axios(`https://pokeapi.co/api/v2/pokemon/${id}`);
+    const pokemonRes = await axios(`${process.env.API_BASE_URL}/${id}`);
 
     const {
       data: {
