@@ -13,6 +13,6 @@
     }
   ],
   "env": {
-    "API_BASE_URL": "@api-base-url"
+    "API_BASE_URL": "@pokemon-api-base-url"
   }
 }
