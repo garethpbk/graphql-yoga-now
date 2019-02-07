@@ -1,0 +1,16 @@
+{
+  "name": "graphql-yoga-now",
+  "version": "1.0.0",
+  "description": "Example graphql-yoga server",
+  "main": "index.js",
+  "author": "gareth bk",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "graphql-yoga": "^1.17.4",
+    "nodemon": "^1.18.9"
+  },
+  "scripts": {
+    "start": "nodemon src/index.js"
+  }
+}

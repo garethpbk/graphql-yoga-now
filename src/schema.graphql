@@ -1,0 +1,18 @@
+type Query {
+  allPokemon(limit: Int): PokemonList
+  pokemon(id: ID!): LongPokemon
+}
+
+type PokemonList {
+  pokemon: [ShortPokemon]!
+}
+
+type ShortPokemon {
+  name: String!
+  url: String!
+}
+
+type LongPokemon {
+  id: ID!
+  name: String!
+}
