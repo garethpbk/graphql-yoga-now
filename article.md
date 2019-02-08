@@ -161,7 +161,7 @@ In _now.json_ add an "env" field, which is where we will specify what's availabl
   ],
   "routes": [
     {
-      "src": "../*",
+      "src": "./*",
       "dest": "src/index.js"
     }
   ],
