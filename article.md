@@ -96,7 +96,7 @@ The last thing we need are route definitions that tell HTTP requests where to po
 
 All traffic is directed to the endpoint exposed by the server.
 
-One last thing before we try deploying: create a file called _.nowignore_ at the root and add node_modules. This tells Now to not directly upload the node_modules folder, as it builds them during deployment itself. It's just like _.gitignore_.
+One last thing before we try deploying: create a file called _.nowignore_ at the root and add node*modules. This tells Now to not directly upload the node_modules folder, as it builds them during deployment itself. It's just like *.gitignore\_.
 
 ## Deploying with Now
 
@@ -161,7 +161,7 @@ In _now.json_ add an "env" field, which is where we will specify what's availabl
   ],
   "routes": [
     {
-      "src": "./*",
+      "src": "../*",
       "dest": "src/index.js"
     }
   ],
