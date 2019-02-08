@@ -87,7 +87,7 @@ The last thing we need are route definitions that tell HTTP requests where to po
   ],
   "routes": [
     {
-      "src": "/*",
+      "src": "./*",
       "dest": "src/index.js
     }
   ]
