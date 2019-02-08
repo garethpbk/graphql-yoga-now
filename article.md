@@ -4,7 +4,7 @@
 
 This tutorial assumes some familiarity with GraphQL, but it's ok if you've never built a server before, we'll go over the one we're deploying briefly.
 
-Sidenote: this article grew out of my difficulties porting a server that worked flawlessly on Now 1.0 to Now 2.0, and as such is not really about using serverless with graphql-yoga.
+Sidenote: this article grew out of my difficulties porting a server that worked flawlessly on Now 1.0 to Now 2.0, and as such is not really about using serverless with graphql-yoga, rather how you can make a normal graphql-yoga server work with Now 2.0.
 
 ## Prerequisites
 
@@ -42,7 +42,7 @@ query GET_SINGLE_POKEMON {
 }
 ```
 
-## Deploying with Now
+## Preparing for Deployment
 
 The exciting part, time to make our pokemon server available to the world. Create a new file at the root of the project called `now.json` - this is a configuration file that tells Now how to build our project.
 
@@ -93,3 +93,104 @@ The last thing we need are route definitions that tell HTTP requests where to po
   ]
 }
 ```
+
+All traffic is directed to the endpoint exposed by the server.
+
+One last thing before we try deploying: create a file called _.nowignore_ at the root and add node_modules. This tells Now to not directly upload the node_modules folder, as it builds them during deployment itself. It's just like _.gitignore_.
+
+## Deploying with Now
+
+Ok, all the pieces are in place, let's do it! Type `now` in the terminal and watch as your project is built before your eyes. When it's done you'll see a "Success! Deployment ready" message. Open up the link it gives you and...oh no, what happened? **HTTP ERROR 500**!?
+
+If you look at the build log from the [online Now dashboard](https://zeit.co/dashboard/) you'll see this error message:
+
+```
+Error: No schema found for path: /var/task/user/src/schema.graphql
+```
+
+In other words, it can't find our schema, and without a schema a GraphQL Server isn't very useful. The issue comes from how the builders change path references, compared to how it works on your computer. Luckily it's an easy fix; open up _index.js_ and find the server instance:
+
+```
+const server = new GraphQLServer({
+  typeDefs: './src/schema.graphql',
+  resolvers,
+});
+```
+
+All we have to do is change the `typeDefs` property from the relative path to one using `__dirname`:
+
+```
+const server = new GraphQLServer({
+  typeDefs: __dirname + '/schema.graphql',
+  resolvers,
+});
+```
+
+The builders now know where to look for the schema. Run `now` again and this time, opening up the link should navigate to the familiar GraphQL Playground interface.
+
+That's it! Your `graphql-yoga` server is now available in the cloud, accessible to anyone with an internet connection. Pretty cool.
+
+## Adding Environment Variables
+
+As a bonus, let's see how to use environment variables with Now 2.0, for all those API keys and such we'd rather keep secret. Zeit has a package for using `process.env` variables locally in development that mirrors how it's done on a Now deployment:
+
+```
+yarn add now-env
+```
+
+(You can use something like `dotenv` here too, but it's nice to have your local setup match the deployment setup.)
+
+Create a new file called _now-secrets.json_ at the project root. As an example we'll make the PokéAPI url an environment variable, so add this:
+
+```
+{
+  "@pokemon-api-base-url": "https://pokeapi.co/api/v2/pokemon"
+}
+```
+
+In _now.json_ add an "env" field, which is where we will specify what's available in `process.env`:
+
+```
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/index.js",
+      "use": "@now/node-server"
+    }
+  ],
+  "routes": [
+    {
+      "src": "./*",
+      "dest": "src/index.js"
+    }
+  ],
+  "env": {
+    "API_BASE_URL": "@pokemon-api-base-url"
+  }
+}
+```
+
+Lastly we will use this in the query resolver; open up _src/resolvers/query.js_ and replace the two API calls with the environment variables:
+
+```
+const allPokemonRes = await axios(`${process.env.API_BASE_URL}?limit=${limit}`);
+```
+
+```
+const pokemonRes = await axios(`${process.env.API_BASE_URL}/${id}`);
+```
+
+Run `yarn start` and you should see the server working fine locally, with the API url coming from an environment variable now. Note that in a real project you'll probably want to add _now-secrets.json_ to your _.gitignore_ list.
+
+Next add the secret to your Now account:
+
+```
+now secret add pokemon-api-base-url https://pokeapi.co/api/v2/pokemon
+```
+
+Type `now` one more time, and the server will be deployed using the environment variable. Keep in mind that Now secrets are tied to your _account_ and not a specific _project_ or _deployment_ - I recommend naming your secrets with specifics, e.g. "pokemon-api-base-url" instead of "api-base-url" as the same secret can be used in multiple projects.
+
+## Wrap Up
+
+That concludes this tutorial. The main difficulties I faced in moving a `graphql-yoga` server from Now 1.0 to Now 2.0 were understanding how to set up builds, routes, the schema path, and environment variables; hopefully you've now got a handle on how to work with them all.
