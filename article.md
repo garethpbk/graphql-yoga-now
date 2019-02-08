@@ -48,7 +48,7 @@ query GET_SINGLE_POKEMON {
 
 The exciting part, time to make our pokemon server available to the world. Create a new file at the root of the project called `now.json` - this is a configuration file that tells Now how to build our project.
 
-First specify that you want to use Now 2.0
+First specify that you want to use Now 2.0:
 
 ```
 {
@@ -58,7 +58,7 @@ First specify that you want to use Now 2.0
 
 (Once upon a time Now was a different platform that used a container-based deployment approach; Now 2.0 shifted this drastically to a serverless model. If you try using version 1 on an account that was made after 2.0 came out, you'll see a "please use Now 2.0" message and it'll fail.)
 
-Next tell Now exactly _how_ to build the project using the `builds` key
+Next tell Now exactly _how_ to build the project using the `builds` key:
 
 ```
 {
@@ -76,7 +76,7 @@ This is where the magic happens. Now "builders" take the code specified in `src`
 
 Since our server is a Node.js server, we want to use a Node.js builder. Here is a gotcha - Now's documentation recommends using the `@now/node` builder for Node.js functions, but because this one isn't written for serverless, the `@now/node-server` builder is the one we want.
 
-The last thing we need are route definitions that tell HTTP requests where to point to
+The last thing we need are route definitions that tell HTTP requests where to point to:
 
 ```
 {
