@@ -16,7 +16,7 @@ We will deploy a very basic `graphql-yoga` server that 1) connects to the [Poké
 
 ## GraphQL Server
 
-In the cloned directory run `yarn` to install dependencies and then `yarn start` to, surprise, start the server. Navigate your browser to [http://localhost:4000](http://localhost:4000) and you should see the [GraphQL Playground](https://github.com/prisma/graphql-playground) IDE open up. `graphl-yoga` includes this awesome tool to explore your server by default.
+In the cloned directory run `yarn` to install dependencies and then `yarn start` to, surprise, start the server. Navigate your browser to [http://localhost:4000](http://localhost:4000) and you should see the [GraphQL Playground](https://github.com/prisma/graphql-playground) IDE open up. `graphl-yoga` includes this awesome tool by default to explore your server.
 
 In _schema.graphql_ there are three types: `PokemonList` which is made up of `ShortPokemon` with just a name and url, and `LongPokemon` with more information. The root `Query` type registers two resolvers, one to return a list of `ShortPokemon` and one to return a single `LongPokemon`. Play around in GraphQL Playground with queries like these:
 
