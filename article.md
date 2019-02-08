@@ -2,9 +2,11 @@
 
 [graphql-yoga](https://github.com/prisma/graphql-yoga) makes it easy to get a lightweight, fully-featured GraphQL server up and running. Zeit's [Now](https://zeit.co/now) offers a cloud deployment platform that utilizes serverless infrastructure to power your applications. Let's look at how to these can be combined to deploy a GraphQL server that takes advantage of some of Now's features, as well as noting some potential pitfalls.
 
-This tutorial assumes some familiarity with GraphQL, but it's ok if you've never built a server before, we'll go over the one we're deploying briefly.
+This tutorial assumes some familiarity with GraphQL, but it's ok if you've never built a server before, we'll briefly go over the one we're deploying.
 
-Sidenote: this article grew out of my difficulties porting a server that worked flawlessly on Now 1.0 to Now 2.0, and as such is not really about using serverless with graphql-yoga, rather how you can make a normal graphql-yoga server work with Now 2.0.
+This article grew out of my difficulties porting a server that worked flawlessly on Now 1.0 to Now 2.0, and as such is not really about using serverless with graphql-yoga, rather how you can make a normal graphql-yoga server work with Now 2.0.
+
+Final code is available for reference here: [https://github.com/garethpbk/graphql-yoga-now/tree/now](https://github.com/garethpbk/graphql-yoga-now/tree/now)
 
 ## Prerequisites
 
@@ -138,8 +140,6 @@ As a bonus, let's see how to use environment variables with Now 2.0, for all tho
 yarn add now-env
 ```
 
-(You can use something like `dotenv` here too, but it's nice to have your local setup match the deployment setup.)
-
 Create a new file called _now-secrets.json_ at the project root. As an example we'll make the PokéAPI url an environment variable, so add this:
 
 ```
@@ -171,11 +171,27 @@ In _now.json_ add an "env" field, which is where we will specify what's availabl
 }
 ```
 
-Lastly we will use this in the query resolver; open up _src/resolvers/query.js_ and replace the two API calls with the environment variables:
+Lastly we will use this in the query resolver; open up _src/resolvers/query.js_ and add `require('now-env')` to the top of the file, then replace the two API calls with the environment variable:
+
+Before:
+
+```
+const allPokemonRes = await axios(`https://pokeapi.co/api/v2/pokemon?limit=${limit}`);
+```
+
+After:
 
 ```
 const allPokemonRes = await axios(`${process.env.API_BASE_URL}?limit=${limit}`);
 ```
+
+Before:
+
+```
+const pokemonRes = await axios(`https://pokeapi.co/api/v2/pokemon/${id}`);
+```
+
+After:
 
 ```
 const pokemonRes = await axios(`${process.env.API_BASE_URL}/${id}`);
@@ -193,4 +209,6 @@ Type `now` one more time, and the server will be deployed using the environment 
 
 ## Wrap Up
 
-That concludes this tutorial. The main difficulties I faced in moving a `graphql-yoga` server from Now 1.0 to Now 2.0 were understanding how to set up builds, routes, the schema path, and environment variables; hopefully you've now got a handle on how to work with them all.
+That concludes this tutorial! The main difficulties I faced in moving a `graphql-yoga` server from Now 1.0 to Now 2.0 were understanding how to set up builds, routes, the schema path, and environment variables; hopefully you've now got a handle on how to work with them all.
+
+Keep an eye out for part 2: a core feature of Now 2.0 is monorepo support, meaning you can configure one _now.json_ at a project's root that allows for deployment of multiple servers and front-ends (even in different languages!) - I'm planning on following this article up with an example of deploying a front-end for this server in the same repo.
